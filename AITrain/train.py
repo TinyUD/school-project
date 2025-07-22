@@ -34,7 +34,11 @@ print(f"[INFO] 클래스 수: {len(dataset.classes)}")
 print(f"[INFO] 총 이미지 수: {len(dataset.samples)}")
 
 # 모델 정의 (사전학습 X)
-model = InceptionResnetV1(pretrained=False, classify=False, num_classes=None).to(device)
+
+model = InceptionResnetV1(
+    pretrained='vggface2',   # 얼굴 임베딩용으로 사용
+    classify=False            # 분류기가 아니라 임베딩 학습용
+).to(device)
 print("[INFO] InceptionResnetV1 모델 생성 완료")
 
 # 손실함수 및 옵티마이저
