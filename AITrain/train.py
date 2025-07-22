@@ -81,7 +81,7 @@ def sample_triplet_batch(dataset, batch_size):
 # 학습 변수
 epochs = 5
 triplet_per_epoch = 100
-batch_size = 2  # 원하는 배치 크기 지정 (예: 8)
+batch_size = 8  # 원하는 배치 크기 지정 (예: 8)
 
 print(f"[INFO] 배치 크기: {batch_size}")
 
@@ -90,18 +90,14 @@ for epoch in range(epochs):
     total_loss = 0
     print(f"\n[Epoch {epoch+1}/{epochs}] 시작")
 
-    # 한 epoch 내 배치 반복 횟수
     steps_per_epoch = triplet_per_epoch // batch_size
 
     for step in range(steps_per_epoch):
         batch = sample_triplet_batch(dataset, batch_size)
 
-        # 이미지들 분리 및 배치 텐서 생성
         anchor_imgs = []
         positive_imgs = []
         negative_imgs = []
-        anchor_classes = []
-        negative_classes = []
 
         for triplet in batch:
             anchor_path, positive_path, negative_path, anchor_class, negative_class = triplet
@@ -113,17 +109,14 @@ for epoch in range(epochs):
             anchor_imgs.append(anchor_img.unsqueeze(0))
             positive_imgs.append(positive_img.unsqueeze(0))
             negative_imgs.append(negative_img.unsqueeze(0))
-            anchor_classes.append(anchor_class)
-            negative_classes.append(negative_class)
 
-        # 배치 텐서 생성 (batch_size, C, H, W)
         anchor_imgs = torch.cat(anchor_imgs, dim=0).to(device)
         positive_imgs = torch.cat(positive_imgs, dim=0).to(device)
         negative_imgs = torch.cat(negative_imgs, dim=0).to(device)
 
         optimizer.zero_grad()
 
-        anchor_embeds = model(anchor_imgs)   # (batch_size, 512)
+        anchor_embeds = model(anchor_imgs)
         positive_embeds = model(positive_imgs)
         negative_embeds = model(negative_imgs)
 
@@ -133,10 +126,14 @@ for epoch in range(epochs):
 
         total_loss += loss.item()
 
-        print(f"[Epoch {epoch+1}/{epochs}] Step {step+1}/{steps_per_epoch} | "
-              f"Loss: {loss.item():.4f}")
+        print(f"[Epoch {epoch+1}/{epochs}] Step {step+1}/{steps_per_epoch} | Loss: {loss.item():.4f}")
 
     avg_loss = total_loss / steps_per_epoch
     print(f"[Epoch {epoch+1}] 평균 손실: {avg_loss:.4f}")
 
 print("\n[INFO] 학습 완료")
+
+# 모델 저장
+save_path = 'facenet_model.pth'
+torch.save(model.state_dict(), save_path)
+print(f"[INFO] 모델 가중치를 '{save_path}'에 저장했습니다.")
