@@ -79,9 +79,9 @@ def sample_triplet_batch(dataset, batch_size):
     return batch
 
 # 학습 변수
-epochs = 5
+epochs = 10
 triplet_per_epoch = 100
-batch_size = 8  # 원하는 배치 크기 지정 (예: 8)
+batch_size = 5  # 원하는 배치 크기 지정 (예: 8)
 
 print(f"[INFO] 배치 크기: {batch_size}")
 
