@@ -23,7 +23,7 @@ transform = transforms.Compose([
 ])
 
 # 데이터 로드
-dataset_dir = 'dataset'  # 데이터셋 경로 지정
+dataset_dir = 'vggfaces/train'  # 데이터셋 경로 지정
 print(f"[INFO] 데이터셋 경로: {dataset_dir}")
 
 dataset = ImageFolder(dataset_dir, transform=transform)
@@ -80,8 +80,8 @@ def sample_triplet_batch(dataset, batch_size):
 
 # 학습 변수
 epochs = 10
-triplet_per_epoch = 100
-batch_size = 5  # 원하는 배치 크기 지정 (예: 8)
+triplet_per_epoch = 200
+batch_size = 8
 
 print(f"[INFO] 배치 크기: {batch_size}")
 
@@ -116,9 +116,9 @@ for epoch in range(epochs):
 
         optimizer.zero_grad()
 
-        anchor_embeds = model(anchor_imgs)
-        positive_embeds = model(positive_imgs)
-        negative_embeds = model(negative_imgs)
+        anchor_embeds = nn.functional.normalize(model(anchor_imgs), p=2, dim=1)
+        positive_embeds = nn.functional.normalize(model(positive_imgs), p=2, dim=1)
+        negative_embeds = nn.functional.normalize(model(negative_imgs), p=2, dim=1)
 
         loss = criterion(anchor_embeds, positive_embeds, negative_embeds)
         loss.backward()

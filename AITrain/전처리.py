@@ -4,7 +4,7 @@ from tqdm import tqdm
 from facenet_pytorch import MTCNN
 import numpy as np
 
-def crop_and_save_faces(input_dir, output_dir, margin=20, image_size=160):
+def crop_and_save_faces(input_dir, output_dir, margin=50, image_size=160):
     mtcnn = MTCNN(keep_all=False, margin=margin, image_size=image_size, post_process=False)
 
     for root, dirs, files in os.walk(input_dir):
